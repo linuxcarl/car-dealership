@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
   Param,
   ParseUUIDPipe,
   Patch,
@@ -10,6 +11,7 @@ import {
 } from '@nestjs/common';
 import { CarsService } from '../services/cars.service';
 import { CreateCarDto } from '../dtos';
+import { UpdateCarDto } from '../dtos/update-car.dto';
 
 @Controller('cars')
 export class CarsController {
@@ -25,20 +27,22 @@ export class CarsController {
     return this.carsService.findOne(id);
   }
   @Post()
+  @HttpCode(201)
   createCar(@Body() body: CreateCarDto) {
-    return body;
+    return this.carsService.create(body);
   }
 
   @Patch(':id')
-  updateCar(@Param('id', ParseUUIDPipe) id: string, @Body() body: any) {
-    return body;
+  updateCar(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() updateCarDto: UpdateCarDto,
+  ) {
+    return this.carsService.update(id, updateCarDto);
   }
 
   @Delete(':id')
+  @HttpCode(204)
   deleteCar(@Param('id', ParseUUIDPipe) id: string) {
-    return {
-      method: 'delete',
-      id,
-    };
+    return this.carsService.delete(id);
   }
 }
